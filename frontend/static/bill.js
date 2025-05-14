@@ -79,7 +79,8 @@ export class CreatePage extends gesso.Page {
     }
 
     update() {
-        gesso.fetchJSON("/api/data", data => {
+        const countryCode = localStorage.getItem("countryCode");
+        gesso.fetchJSON("/api/data/proxy", data => {
             $("#bill-create-form").reset();
 
             const appointment = data.appointments[$p("appointment")];
@@ -91,7 +92,7 @@ export class CreatePage extends gesso.Page {
             $("#doctor").setAttribute("value", appointment.doctor_id);
             $("#patient-name").setAttribute("value", patient.name);
             $("#appointment-datetime").setAttribute("value", new Date(appointment.datetime).toLocaleString());
-        });
+        }, null, {"Country-Code": countryCode});
     }
 }
 
@@ -162,7 +163,8 @@ export class PayPage extends gesso.Page {
     }
 
     update() {
-        const proxyHost = window.env?.PROXY_HOST || "/api/data";
+        const proxyHost = "/api/data/proxy";
+        const countryCode = localStorage.getItem("countryCode");
 
         gesso.fetchJSON(proxyHost, data => {
             $("#bill-pay-form").reset();
@@ -177,6 +179,6 @@ export class PayPage extends gesso.Page {
             $("#appointment-datetime").setAttribute("value", new Date(appointment.datetime).toLocaleString());
             $("#doctor").setAttribute("value", doctor.name);
             $("#amount-due").setAttribute("value", bill.amount_due);
-        });
+        }, null, {"Country-Code": countryCode});
     }
 }

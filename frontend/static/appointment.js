@@ -82,7 +82,8 @@ export class CreatePage extends gesso.Page {
     }
 
     update() {
-        const proxyHost = window.env?.PROXY_HOST || "/api/data";
+        const proxyHost = "/api/data/proxy";
+        const countryCode = localStorage.getItem("countryCode");
 
         gesso.fetchJSON(proxyHost, data => {
             $("#appointment-form").reset();
@@ -96,6 +97,6 @@ export class CreatePage extends gesso.Page {
             $("#time").setAttribute("value", gesso.formatISOTime(datetime).slice(0, 5));
             $("#requested-date").textContent = datetime.toLocaleDateString();
             $("#requested-time").textContent = datetime.toLocaleTimeString();
-        });
+        }, null, {"Country-Code": countryCode});
     }
 }

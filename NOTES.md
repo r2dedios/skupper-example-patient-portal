@@ -148,7 +148,7 @@ oc logs -f deployment/hub-exate
 **DATABASE-VM:**
 ```sh
 # DB deployment
-podman run --name database-target --network skupper --detach --rm -p 5432:5432 quay.io/avillega/patient-portal-database:latest
+podman run --name database-target --network skupper --detach --rm -p 5432:5432 quay.io/avillega/patient-portal-database:exate
 
 # DB Access
 podman exec -it database-target psql -U patient_portal

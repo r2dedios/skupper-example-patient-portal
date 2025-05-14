@@ -118,10 +118,6 @@ async def get_proxy_data(request):
         "countryCode": countryCode
     }
 
-    print("APIGATOR_HOST", apigator_proxy_url)
-    print("APIGATOR_PRE_HEADERS", reqHeaders)
-    print("APIGATOR_HEADERS", headers)
-
     async with AsyncClient() as client:
         try:
             response = await client.get(apigator_proxy_url, headers=headers)
@@ -150,6 +146,7 @@ async def get_data(request):
 
             data[table] = items
 
+    print("DB RESPONSE: ", data)
     return CustomJsonResponse(data)
 
 @star.route("/api/health")

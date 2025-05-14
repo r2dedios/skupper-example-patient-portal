@@ -95,9 +95,9 @@ export class MainPage extends gesso.Page {
 
     updateContent() {
         var cc_menu = document.getElementById("country-select");
-        gesso.fetchJSON("/api/data", data => {
+        gesso.fetchJSON("/api/data/proxy", data => {
             updatePatientLoginLinks(data);
             updateDoctorLoginLinks(data);
-        });
+        }, null, {"Country-Code": "ES"});
     }
 }
