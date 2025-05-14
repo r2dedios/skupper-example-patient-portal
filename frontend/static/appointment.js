@@ -28,15 +28,15 @@ const html = `
 
       <form id="appointment-form">
         <div class="form-field">
-          <div>Patient</div>
-          <div><input id="patient" readonly="readonly"/></div>
-          <div>The patient requesting the appointment</div>
+          <div>Customer</div>
+          <div><input id="customer" readonly="readonly"/></div>
+          <div>The customer requesting the appointment</div>
         </div>
 
         <div class="form-field">
           <div>Description</div>
           <div><input id="description" name="description" readonly="readonly"></div>
-          <div>The purpose of the patient's visit</div>
+          <div>The purpose of the customer's visit</div>
         </div>
 
         <div class="form-field">
@@ -67,17 +67,17 @@ export class CreatePage extends gesso.Page {
         this.body.$("#appointment-form").addEventListener("submit", event => {
             event.preventDefault();
 
-            const doctor = parseInt($p("doctor"));
+            const employee = parseInt($p("employee"));
             const appointmentRequest = parseInt($p("appointment-request"));
             const datetime = new Date(`${event.target.date.value}T${event.target.time.value}`);
 
             gesso.postJSON("/api/appointment/create", {
                 appointment_request: appointmentRequest,
-                doctor: doctor,
+                employee: employee,
                 datetime: datetime.toISOString(),
             });
 
-            this.router.navigate(new URL(`/doctor?id=${doctor}&tab=appointments`, window.location));
+            this.router.navigate(new URL(`/employee?id=${employee}&tab=appointments`, window.location));
         });
     }
 
@@ -91,7 +91,7 @@ export class CreatePage extends gesso.Page {
             const appointmentRequest = data.appointment_requests[$p("appointment-request")];
             const datetime = new Date(appointmentRequest.datetime);
 
-            $("#patient").setAttribute("value", data.patients[appointmentRequest.patient_id].name);
+            $("#customer").setAttribute("value", data.patients[appointmentRequest.patient_id].name);
             $("#description").setAttribute("value", appointmentRequest.description);
             $("#date").setAttribute("value", gesso.formatISODate(datetime));
             $("#time").setAttribute("value", gesso.formatISOTime(datetime).slice(0, 5));

@@ -92,8 +92,8 @@ star = Starlette(debug=True, on_startup=[startup], on_shutdown=[shutdown])
 star.mount("/static", StaticFiles(directory="static"), name="static")
 
 @star.route("/")
-@star.route("/patient")
-@star.route("/doctor")
+@star.route("/customer")
+@star.route("/employee")
 @star.route("/appointment/create")
 @star.route("/appointment-request/create")
 @star.route("/bill/create")
@@ -163,7 +163,7 @@ async def post_appointment_request_create(request):
     async with pool.connection() as conn:
         await conn.execute("insert into appointment_requests (patient_id, datetime, description) "
                            "values (%s, %s, %s)",
-                           [data["patient"], data["datetime"], data["description"]])
+                           [data["customer"], data["datetime"], data["description"]])
 
     return CustomJsonResponse({"error": None})
 
@@ -183,7 +183,7 @@ async def post_appointment_create(request):
     async with pool.connection() as conn:
         await conn.execute("insert into appointments (appointment_request_id, doctor_id, datetime) "
                            "values (%s, %s, %s)",
-                           [data["appointment_request"], data["doctor"], data["datetime"]])
+                           [data["appointment_request"], data["employee"], data["datetime"]])
 
     return CustomJsonResponse({"error": None})
 

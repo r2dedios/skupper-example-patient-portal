@@ -26,12 +26,11 @@ const html = `
   <header>
     <div>
       <div>
-        <span class="material-icons-outlined">medical_services</span>
-        Patient Portal
+      <span class="material-icons-outlined"> account_balance </span> Green Bank Portal
       </div>
       <nav id="global-nav">
-        <a>Doctor <span id="doctor-name">-</span></a>
-        <span id="doctor-flag">-</span>
+        <a><b>Employee </b><span id="employee-name">-</span></a>
+        <span id="employee-flag">-</span>
         <a id="log-out-link" href="/">Log out</a>
       </nav>
     </div>
@@ -46,11 +45,11 @@ const html = `
     <a data-tab="appointment-requests">Appointment requests</a>
     <a data-tab="appointments">Appointments</a>
     <a data-tab="bills">Bills</a>
-    <a data-tab="patients">Patients</a>
+    <a data-tab="customers">Customers</a>
   </nav>
 
   <div data-tab="overview">
-    <h1>Hello, Doctor <span id="greeting-name">-</span></h1>
+    <h1>Hello, Employee <span id="greeting-name">-</span></h1>
 
     <p id="appointment-request-summary"></p>
 
@@ -75,10 +74,10 @@ const html = `
     <div id="bill-table"></div>
   </div>
 
-  <div data-tab="patients">
-    <h1>Patients</h1>
+  <div data-tab="customers">
+    <h1>Customers</h1>
 
-    <div id="patient-table"></div>
+    <div id="customer-table"></div>
   </div>
 </div>
 
@@ -93,14 +92,14 @@ const html = `
 const tabs = new gesso.Tabs("tab");
 
 function createAppointmentLink(id) {
-    const doctor = $p("id");
-    return gesso.createLink(null, `/appointment/create?doctor=${doctor}&appointment-request=${id}`,
+    const employee = $p("id");
+    return gesso.createLink(null, `/appointment/create?employee=${employee}&appointment-request=${id}`,
                             {class: "button", text: "Create appointment"});
 }
 
 const appointmentRequestTable = new gesso.Table("appointment-request-table", [
     ["ID", "id"],
-    ["Patient", "patient_id", (id, record, data) => data.patients[id].name],
+    ["Customer", "patient_id", (id, record, data) => data.patients[id].name],
     ["Date and time", "datetime", datetime => new Date(datetime).toLocaleString()],
     ["Description", "description"],
     ["", "id", createAppointmentLink],
@@ -108,15 +107,15 @@ const appointmentRequestTable = new gesso.Table("appointment-request-table", [
 
 const appointmentTable = new gesso.Table("appointment-table", [
     ["ID", "id"],
-    ["Patient", "appointment_request_id", (id, record, data) => data.patients[data.appointment_requests[id].patient_id].name],
+    ["Customer", "appointment_request_id", (id, record, data) => data.patients[data.appointment_requests[id].patient_id].name],
     ["Date and time", "datetime", datetime => new Date(datetime).toLocaleString()],
     ["Description", "appointment_request_id", (id, record, data) => data.appointment_requests[id].description],
-    ["", "id", id => gesso.createLink(null, `/bill/create?appointment=${id}`, {class: "button", text: "Bill patient"})],
+    ["", "id", id => gesso.createLink(null, `/bill/create?appointment=${id}`, {class: "button", text: "Bill Customer"})],
 ]);
 
 const billTable = new gesso.Table("bill-table", [
     ["ID", "id"],
-    ["Patient", "appointment_id", (id, record, data) => {
+    ["Customer", "appointment_id", (id, record, data) => {
         return data.patients[data.appointment_requests[data.appointments[id].appointment_request_id].patient_id].name;
     }],
     ["Appointment", "appointment_id", (id, record, data) => new Date(data.appointments[id].datetime).toLocaleString()],
@@ -124,7 +123,7 @@ const billTable = new gesso.Table("bill-table", [
     ["Date paid", "payment_datetime", datetime => nvl(datetime, "-", new Date(datetime).toLocaleString())],
 ]);
 
-const patientTable = new gesso.Table("patient-table", [
+const customerTable = new gesso.Table("customer-table", [
     ["ID", "id"],
     ["Name", "name"],
     ["ZIP", "zip"],
@@ -135,7 +134,7 @@ const patientTable = new gesso.Table("patient-table", [
 
 export class MainPage extends gesso.Page {
     constructor(router) {
-        super(router, "/doctor", html);
+        super(router, "/employee", html);
     }
 
     getContentKey() {
@@ -154,7 +153,7 @@ export class MainPage extends gesso.Page {
             const id = parseInt($p("id"));
             const name = data.doctors[id].name;
             const countryFlag = `${renderCountryFlag(data.doctors[id].country)}`;
-            const appointmentCreateLink = `/appointment/create?doctor=${id}`;
+            const appointmentCreateLink = `/appointment/create?employee=${id}`;
 
             const appointmentRequests = Object.values(data.appointment_requests).filter(record => {
                 return !Object.values(data.appointments).some(x => x.appointment_request_id === record.id);
@@ -164,8 +163,10 @@ export class MainPage extends gesso.Page {
             const bills = Object.values(data.bills).filter(record => data.appointments[record.appointment_id].doctor_id === id);
             const patients = Object.values(data.patients);
 
-            $("#doctor-name").textContent = name;
-            $("#doctor-flag").textContent = countryFlag;
+            console.logs
+
+            $("#employee-name").textContent = name;
+            $("#employee-flag").textContent = countryFlag;
             $("#greeting-name").textContent = name.split(/ /)[1];
 
             $("#appointment-request-summary").innerHTML =
@@ -176,7 +177,7 @@ export class MainPage extends gesso.Page {
             appointmentRequestTable.update(appointmentRequests, data);
             appointmentTable.update(appointments, data);
             billTable.update(bills, data);
-            patientTable.update(patients, data);
+            customerTable.update(patients, data);
         }, null, {"Country-Code": countryCode});
     }
 }

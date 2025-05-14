@@ -24,23 +24,23 @@ const createHtml = `
 <body class="excursion">
   <section>
     <div>
-      <h1>Bill a patient for an appointment</h1>
+      <h1>Bill a customer for an appointment</h1>
 
       <form id="bill-create-form">
         <input type="hidden" id="appointment" name="appointment"/>
-        <input type="hidden" id="patient" name="patient"/>
-        <input type="hidden" id="doctor" name="doctor"/>
+        <input type="hidden" id="customer" name="customer"/>
+        <input type="hidden" id="employee" name="employee"/>
 
         <div class="form-field">
-          <div>Patient</div>
-          <div><input id="patient-name" name="patient-name" readonly="readonly"/></div>
-          <div>The patient for this appointment</div>
+          <div>Customer</div>
+          <div><input id="customer-name" name="customer-name" readonly="readonly"/></div>
+          <div>The customer for this appointment</div>
         </div>
 
         <div class="form-field">
           <div>Appointment</div>
           <div><input id="appointment-datetime" name="appointment-datetime" readonly="readonly"/></div>
-          <div>The date and time of the patient's visit</div>
+          <div>The date and time of the customer's visit</div>
         </div>
 
         <div class="form-field">
@@ -48,11 +48,11 @@ const createHtml = `
           <div>
             <input type="number" id="amount-due" name="amount-due" placeholder="0" required="required"/>
           </div>
-          <div>The amount to bill the patient</div>
+          <div>The amount to bill the customer</div>
         </div>
 
         <div class="form-buttons">
-          <button type="submit">Bill patient</button>
+          <button type="submit">Bill customer</button>
         </div>
       </form>
     </div>
@@ -67,14 +67,14 @@ export class CreatePage extends gesso.Page {
         this.body.$("#bill-create-form").addEventListener("submit", event => {
             event.preventDefault();
 
-            const doctor = parseInt(event.target.doctor.value);
+            const employee = parseInt(event.target.employee.value);
 
             gesso.postJSON("/api/bill/create", {
                 appointment: parseInt(event.target.appointment.value),
                 amount_due: parseInt(event.target["amount-due"].value),
             });
 
-            this.router.navigate(new URL(`/doctor?id=${doctor}&tab=bills`, window.location));
+            this.router.navigate(new URL(`/employee?id=${employee}&tab=bills`, window.location));
         });
     }
 
@@ -85,12 +85,12 @@ export class CreatePage extends gesso.Page {
 
             const appointment = data.appointments[$p("appointment")];
             const appointmentRequest = data.appointment_requests[appointment.appointment_request_id];
-            const patient = data.patients[appointmentRequest.patient_id];
+            const customer = data.patients[appointmentRequest.patient_id];
 
             $("#appointment").setAttribute("value", appointment.id);
-            $("#patient").setAttribute("value", patient.id);
-            $("#doctor").setAttribute("value", appointment.doctor_id);
-            $("#patient-name").setAttribute("value", patient.name);
+            $("#customer").setAttribute("value", customer.id);
+            $("#employee").setAttribute("value", appointment.doctor_id);
+            $("#customer-name").setAttribute("value", customer.name);
             $("#appointment-datetime").setAttribute("value", new Date(appointment.datetime).toLocaleString());
         }, null, {"Country-Code": countryCode});
     }
@@ -103,12 +103,12 @@ const payHtml = `
       <h1>Pay a bill</h1>
       <form id="bill-pay-form">
         <input type="hidden" id="bill" name="bill"/>
-        <input type="hidden" id="patient" name="patient"/>
+        <input type="hidden" id="customer" name="customer"/>
 
         <div class="form-field">
-          <div>Doctor</div>
-          <div><input id="doctor" name="doctor" readonly="readonly"/></div>
-          <div>Your doctor for this appointment</div>
+          <div>Bank Employee</div>
+          <div><input id="employee" name="employee" readonly="readonly"/></div>
+          <div>Your Bank employee for this appointment</div>
         </div>
 
         <div class="form-field">
@@ -150,15 +150,15 @@ export class PayPage extends gesso.Page {
             event.preventDefault();
 
             const bill = parseInt(event.target.bill.value);
-            const patient = parseInt(event.target.patient.value);
+            const customer = parseInt(event.target.customer.value);
 
 
-            main.router.navigate(new URL(`/patient?id=${patient}&tab=bills`, window.location));
+            main.router.navigate(new URL(`/customer?id=${customer}&tab=bills`, window.location));
 
             const countryCode = localStorage.getItem("countryCode");
             gesso.postJSON("/api/bill/pay", {bill: bill}, null, null, {"x-country-code": countryCode});
 
-            main.router.navigate(new URL(`/patient?id=${patient}&tab=bills`, window.location));
+            main.router.navigate(new URL(`/customer?id=${customer}&tab=bills`, window.location));
         });
     }
 
@@ -172,12 +172,12 @@ export class PayPage extends gesso.Page {
             const bill = data.bills[parseInt($p("id"))];
             const appointment = data.appointments[bill.appointment_id];
             const appointmentRequest = data.appointment_requests[appointment.appointment_request_id];
-            const doctor = data.doctors[appointment.doctor_id];
+            const employee = data.doctors[appointment.doctor_id];
 
             $("#bill").setAttribute("value", bill.id);
-            $("#patient").setAttribute("value", appointmentRequest.patient_id);
+            $("#customer").setAttribute("value", appointmentRequest.patient_id);
             $("#appointment-datetime").setAttribute("value", new Date(appointment.datetime).toLocaleString());
-            $("#doctor").setAttribute("value", doctor.name);
+            $("#employee").setAttribute("value", employee.name);
             $("#amount-due").setAttribute("value", bill.amount_due);
         }, null, {"Country-Code": countryCode});
     }

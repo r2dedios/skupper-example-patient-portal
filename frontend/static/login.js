@@ -25,28 +25,28 @@ const html = `
   <section>
     <div>
       <h1>
-        <span class="material-icons-outlined">medical_services</span> Patient Portal
+      <span class="material-icons-outlined"> account_balance </span> Green Bank Portal
       </h1>
 
-      <p>Patient Portal is an example application.  It uses a web
+      <p>Green Bank Portal is an example application.  It uses a web
       frontend, a relational database, and a payment-processing
-      service.</p>
+      service. The application is distributed across two different clusters on separte countries
+      and it a different payments service per country</p>
 
-      <p>Patients can request appointments and pay bills.  Doctors can
-      confirm appointments and bill patients.  Log in as a patient or
-      doctor to try it out.</p>
+      <p>You can login as Bank Customer or Bank Employee. Depending on the country the system will display different information
+      based on the legislation of each country.</p>
 
       <div class="hflex">
         <div>
-          <h2>Log in as a patient:</h2>
+          <h2>Log in as a Customer:</h2>
 
-          <nav id="patient-login-links"></nav>
+          <nav id="customer-login-links"></nav>
         </div>
 
         <div>
-          <h2>Log in as a doctor:</h2>
+          <h2>Log in as a Bank Employee:</h2>
 
-          <nav id="doctor-login-links"></nav>
+          <nav id="employee-login-links"></nav>
         </div>
       </div>
     </div>
@@ -55,37 +55,37 @@ const html = `
 `;
 
 function updatePatientLoginLinks(data) {
-    const nav = gesso.createNav(null, "#patient-login-links");
+    const nav = gesso.createNav(null, "#customer-login-links");
 
     for (const item of Object.values(data.patients)) {
         const countryCode = item.country || "";
         const displayName = `${item.name} (${renderCountryFlag(countryCode)})`;
 
-        const link = gesso.createLink(nav, `/patient?id=${item.id}`, displayName);
+        const link = gesso.createLink(nav, `/customer?id=${item.id}`, displayName);
 
         link.addEventListener("click", () => {
           localStorage.setItem("countryCode", countryCode);
         });
     }
 
-    $("#patient-login-links").replaceWith(nav);
+    $("#customer-login-links").replaceWith(nav);
 }
 
 function updateDoctorLoginLinks(data) {
-    const nav = gesso.createNav(null, "#doctor-login-links");
+    const nav = gesso.createNav(null, "#employee-login-links");
 
     for (const item of Object.values(data.doctors)) {
         const countryCode = item.country || "";
         const displayName = `${item.name} (${renderCountryFlag(countryCode)})`;
 
-        const link = gesso.createLink(nav, `/doctor?id=${item.id}`, displayName);
+        const link = gesso.createLink(nav, `/employee?id=${item.id}`, displayName);
 
         link.addEventListener("click", () => {
           localStorage.setItem("countryCode", countryCode);
         });
     }
 
-    $("#doctor-login-links").replaceWith(nav);
+    $("#employee-login-links").replaceWith(nav);
 }
 
 export class MainPage extends gesso.Page {

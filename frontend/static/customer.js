@@ -26,11 +26,10 @@ const html = `
   <header>
     <div>
       <div>
-        <span class="material-icons-outlined">medical_services</span>
-        Patient Portal
+      <span class="material-icons-outlined"> account_balance </span> Green Bank Portal
       </div>
       <nav id="global-nav">
-        <a>Customer <span id="patient-name">-</span> <span id="patient-flag">-</span></a>
+        <a><b>Customer </b><span id="customer-name">-</span> <span id="customer-flag">-</span></a>
         <a id="log-out-link" href="/">Log out</a>
       </nav>
     </div>
@@ -44,7 +43,7 @@ const html = `
     <a data-tab="appointment-requests">Appointment requests</a>
     <a data-tab="appointments">Appointments</a>
     <a data-tab="bills">Bills</a>
-    <a data-tab="doctors">Doctors</a>
+    <a data-tab="employees">Employees</a>
   </nav>
 
   <div data-tab="overview">
@@ -77,10 +76,10 @@ const html = `
     <div id="bill-table"></div>
   </div>
 
-  <div data-tab="doctors">
-    <h1>Doctors</h1>
+  <div data-tab="employees">
+    <h1>Employees</h1>
 
-    <div id="doctor-table"></div>
+    <div id="employee-table"></div>
   </div>
 </div>
 
@@ -102,21 +101,21 @@ const appointmentRequestTable = new gesso.Table("appointment-request-table", [
 
 const appointmentTable = new gesso.Table("appointment-table", [
     ["ID", "id"],
-    ["Doctor", "doctor_id", (id, record, data) => data.doctors[id].name],
+    ["Employee", "doctor_id", (id, record, data) => data.doctors[id].name],
     ["Date and time", "datetime", datetime => new Date(datetime).toLocaleString()],
     ["Description", "description", (id, record, data) => nvl(data.appointment_requests[record.appointment_request_id].description, "-")],
 ]);
 
 const billTable = new gesso.Table("bill-table", [
     ["ID", "id"],
-    ["Doctor", "appointment_id", (id, record, data) => data.doctors[data.appointments[id].doctor_id].name],
+    ["Employee", "appointment_id", (id, record, data) => data.doctors[data.appointments[id].doctor_id].name],
     ["Appointment", "appointment_id", (id, record, data) => new Date(data.appointments[id].datetime).toLocaleString()],
     ["Amount due", "amount_due", amount_due => `$${amount_due}`],
     ["Date paid", "payment_datetime", datetime => nvl(datetime, "-", new Date(datetime).toLocaleString())],
     ["", "id", id => gesso.createLink(null, `/bill/pay?id=${id}`, {class: "button", text: "Pay bill"})],
 ]);
 
-const doctorTable = new gesso.Table("doctor-table", [
+const doctorTable = new gesso.Table("employee-table", [
     ["ID", "id"],
     ["Name", "name"],
     ["Country", "country", renderCountryWithFlag],
@@ -126,7 +125,7 @@ const doctorTable = new gesso.Table("doctor-table", [
 
 export class MainPage extends gesso.Page {
     constructor(router) {
-        super(router, "/patient", html);
+        super(router, "/customer", html);
     }
 
     getContentKey() {
@@ -145,7 +144,7 @@ export class MainPage extends gesso.Page {
             const id = parseInt($p("id"));
             const name = data.patients[id].name;
             const countryFlag = `${renderCountryFlag(data.patients[id].country)}`;
-            const appointmentRequestCreateLink = `/appointment-request/create?patient=${id}`;
+            const appointmentRequestCreateLink = `/appointment-request/create?customer=${id}`;
 
             const appointmentRequests = Object.values(data.appointment_requests).filter(record => {
                 return id === record.patient_id && !Object.values(data.appointments).some(x => x.appointment_request_id === record.id);
@@ -162,8 +161,8 @@ export class MainPage extends gesso.Page {
             const unpaidBills = bills.filter(record => record.payment_datetime === null);
             const doctors = Object.values(data.doctors);
 
-            $("#patient-name").textContent = name;
-            $("#patient-flag").textContent = countryFlag;
+            $("#customer-name").textContent = name;
+            $("#customer-flag").textContent = countryFlag;
             $("#greeting-name").textContent = name.split(/ /)[0];
 
             $("#appointment-request-create-link").setAttribute("href", appointmentRequestCreateLink);

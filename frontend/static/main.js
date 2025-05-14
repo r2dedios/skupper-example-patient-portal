@@ -22,15 +22,15 @@ import * as gesso from "./gesso/main.js";
 import * as appointment from "./appointment.js";
 import * as appointmentRequest from "./appointment-request.js";
 import * as bill from "./bill.js";
-import * as doctor from "./doctor.js";
+import * as employee from "./employee.js";
 import * as login from "./login.js";
-import * as patient from "./patient.js";
+import * as customer from "./customer.js";
 
 export const router = new gesso.Router();
 
 new login.MainPage(router);
-new patient.MainPage(router);
-new doctor.MainPage(router);
+new customer.MainPage(router);
+new employee.MainPage(router);
 new appointment.CreatePage(router);
 new appointmentRequest.CreatePage(router);
 new bill.CreatePage(router);

@@ -27,7 +27,7 @@ const html = `
       <h1>Request an appointment</h1>
 
       <form id="appointment-request-form">
-        <input id="patient" type="hidden" name="patient"/>
+        <input id="customer" type="hidden" name="customer"/>
 
         <div class="form-field">
           <div>Date</div>
@@ -63,16 +63,16 @@ export class CreatePage extends gesso.Page {
         this.body.$("#appointment-request-form").addEventListener("submit", event => {
             event.preventDefault();
 
-            const patient = parseInt($p("patient"));
+            const customer = parseInt($p("customer"));
             const datetime = new Date(`${event.target.date.value}T${event.target.time.value}`);
 
             gesso.postJSON("/api/appointment-request/create", {
-                patient: patient,
+                customer: customer,
                 datetime: datetime.toISOString(),
                 description: event.target.description.value,
             });
 
-            this.router.navigate(new URL(`/patient?id=${patient}`, window.location));
+            this.router.navigate(new URL(`/customer?id=${customer}`, window.location));
         });
     }
 
