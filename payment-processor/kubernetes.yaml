@@ -5,7 +5,7 @@ metadata:
     app: payment-processor
   name: payment-processor
 spec:
-  replicas: 3
+  replicas: 1
   selector:
     matchLabels:
       app: payment-processor
@@ -16,6 +16,10 @@ spec:
     spec:
       containers:
         - name: payment-processor
-          image: quay.io/skupper/patient-portal-payment-processor
+          image: quay.io/avillega/patient-portal-payment-processor:latest
+          imagePullPolicy: Always
           ports:
             - containerPort: 8080
+          env:
+            - name: COUNTRY_CODE
+              value: "ES"

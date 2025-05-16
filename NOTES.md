@@ -65,6 +65,18 @@ podman build -t default-route-openshift-image-registry.apps.exate-alpha.azure.sa
 podman push --tls-verify=false default-route-openshift-image-registry.apps.exate-alpha.azure.sandboxedcontainers.com/skupper-patient-portal-database/patient-portal-database:latest
 ```
 
+## 7. Custom Payment Processor for eXate
+### Building modified Payment Processor image
+```sh
+podman build -t quay.io/avillega/patient-portal-payment-processor:latest -f payment-processor/Containerfile payment-processor/
+podman push quay.io/avillega/patient-portal-payment-processor:latest
+```
+```sh
+# Internal Registry
+podman build -t default-route-openshift-image-registry.apps.exate-alpha.azure.sandboxedcontainers.com/skupper-patient-portal-payment-processor/patient-portal-payment-processor:latest -f payment-processor/Containerfile payment-processor/
+podman push --tls-verify=false default-route-openshift-image-registry.apps.exate-alpha.azure.sandboxedcontainers.com/skupper-patient-portal-payment-processor/patient-portal-payment-processor:latest
+```
+
 
 ## 7 Installation
 ### 7.1 Project setup
@@ -124,18 +136,21 @@ oc logs -f deployment/frontend
 **PRIVATE-GB:**
 ```sh
 oc apply -f payment-processor/kubernetes.yaml
+oc set env deployment/payment-processor COUNTRY_CODE=GB
 oc logs -f deployment/payment-processor
 ```
 
 **PRIVATE-CH:**
 ```sh
 oc apply -f payment-processor/kubernetes.yaml
+oc set env deployment/payment-processor COUNTRY_CODE=CH
 oc logs -f deployment/payment-processor
 ```
 
 **PRIVATE-US:**
 ```sh
 oc apply -f payment-processor/kubernetes.yaml
+oc set env deployment/payment-processor COUNTRY_CODE=US
 oc logs -f deployment/payment-processor
 ```
 

@@ -152,11 +152,10 @@ export class PayPage extends gesso.Page {
             const bill = parseInt(event.target.bill.value);
             const customer = parseInt(event.target.customer.value);
 
-
             main.router.navigate(new URL(`/customer?id=${customer}&tab=bills`, window.location));
 
             const countryCode = localStorage.getItem("countryCode");
-            gesso.postJSON("/api/bill/pay", {bill: bill}, null, null, {"x-country-code": countryCode});
+            gesso.postJSON("/api/bill/pay", {bill: bill, customer: customer}, null, null, {"x-country-code": countryCode});
 
             main.router.navigate(new URL(`/customer?id=${customer}&tab=bills`, window.location));
         });

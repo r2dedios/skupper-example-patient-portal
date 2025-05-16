@@ -5,21 +5,18 @@ metadata:
   labels:
     app: frontend
     partner: exate
-    country: GB
-  name: frontend-exate-gb
+  name: frontend-exate
 spec:
   replicas: 1
   selector:
     matchLabels:
       app: frontend
       partner: exate
-      country: GB
   template:
     metadata:
       labels:
         app: frontend
         partner: exate
-        country: GB
     spec:
       containers:
         - name: frontend
@@ -38,14 +35,12 @@ spec:
               value: "8000"
             - name: APIGATOR_HOST
               value: "https://gateway-gravitee-apim.apps.exate-alpha.azure.sandboxedcontainers.com/api/data"
-            - name: COUNTRY_CODE
-              value: "GB"
 
 ---
 kind: Service
 apiVersion: v1
 metadata:
-  name: frontend-exate-gb
+  name: frontend-exate
 spec:
   type: ClusterIP
   ports:
@@ -57,98 +52,19 @@ spec:
   selector:
     app: frontend
     partner: exate
-    country: GB
 
 ---
 kind: Route
 apiVersion: route.openshift.io/v1
 metadata:
-  name: frontend-exate-gb
+  name: frontend-exate
   namespace: skupper-patient-portal-public
 spec:
-  host: frontend-exate-gb-skupper-patient-portal-public.apps.exate-alpha.azure.sandboxedcontainers.com
+  host: frontend-exate-skupper-patient-portal-public.apps.exate-alpha.azure.sandboxedcontainers.com
   path: /
   to:
     kind: Service
-    name: frontend-exate-gb
-    weight: 100
-  port:
-    targetPort: http
-  tls:
-    termination: edge
-  wildcardPolicy: None
-
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  labels:
-    app: frontend
-    partner: exate
-    country: CH
-  name: frontend-exate-ch
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: frontend
-      partner: exate
-      country: CH
-  template:
-    metadata:
-      labels:
-        app: frontend
-        partner: exate
-        country: CH
-    spec:
-      containers:
-        - name: frontend
-          image: quay.io/avillega/patient-portal-frontend:latest
-          imagePullPolicy: Always
-          ports:
-            - containerPort: 8080
-          env:
-            - name: DATABASE_SERVICE_HOST
-              value: "database"
-            - name: DATABASE_SERVICE_PORT
-              value: "5432"
-            - name: PAYMENT_PROCESSOR_SERVICE_HOST
-              value: "hub"
-            - name: PAYMENT_PROCESSOR_SERVICE_PORT
-              value: "8000"
-            - name: APIGATOR_HOST
-              value: "https://gateway-gravitee-apim.apps.exate-alpha.azure.sandboxedcontainers.com/api/data"
-            - name: COUNTRY_CODE
-              value: "CH"
----
-kind: Service
-apiVersion: v1
-metadata:
-  name: frontend-exate-ch
-spec:
-  type: ClusterIP
-  ports:
-    - name: http
-      protocol: TCP
-      port: 8080
-      targetPort: 8080
-  internalTrafficPolicy: Cluster
-  selector:
-    app: frontend
-    partner: exate
-    country: CH
----
-kind: Route
-apiVersion: route.openshift.io/v1
-metadata:
-  name: frontend-exate-ch
-  namespace: skupper-patient-portal-public
-spec:
-  host: frontend-exate-ch-skupper-patient-portal-public.apps.exate-alpha.azure.sandboxedcontainers.com
-  path: /
-  to:
-    kind: Service
-    name: frontend-exate-ch
+    name: frontend-exate
     weight: 100
   port:
     targetPort: http

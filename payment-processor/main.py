@@ -24,11 +24,18 @@ import uvicorn
 from starlette.applications import Starlette
 from starlette.responses import JSONResponse, Response
 
+countryCode = os.environ.get("COUNTRY_CODE", "ES")
+
+print("INFO:     This is the Payment Processor of", countryCode, flush=True)
+print("INFO:     Ready to attend requests", flush=True)
+
 star = Starlette(debug=True)
 
 @star.route("/api/pay", methods=["POST"])
 async def pay(request):
     request_data = await request.json()
+
+    print("LOG:      Processing payment request from", request_data)
 
     return JSONResponse({"error": None})
 
@@ -42,5 +49,6 @@ if __name__ == "__main__":
     parser.add_argument("--port", type=int, default=8080)
 
     args = parser.parse_args()
+
 
     uvicorn.run(star, host=args.host, port=args.port)

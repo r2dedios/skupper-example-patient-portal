@@ -203,11 +203,10 @@ async def post_bill_pay(request):
     data = await request.json()
     headers = dict(request.headers)
 
-    print("PAYMENT_URL", payment_processor_url)
     print("PAYMENT_DATA", data)
 
     async with AsyncClient() as client:
-        response = await client.post(f"{payment_processor_url}/api/pay", json={}, headers={"x-country-code": headers.get("x-country-code")})
+        response = await client.post(f"{payment_processor_url}/api/pay", json=data, headers={"x-country-code": headers.get("x-country-code")})
 
     if response.status_code != 200:
         return CustomJsonResponse({"error": response.text}, response.status_code)

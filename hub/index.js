@@ -40,6 +40,8 @@ const countryTable = {
     US : 'payment-processor-us',
 };
 
+app.use(express.json());
+
 const dispatchRequest = async function(req, res) {
     const id             = req.query.id;
     const dispatchHeader = req.headers['x-country-code'];
@@ -47,9 +49,18 @@ const dispatchRequest = async function(req, res) {
     const url            = `http://${targetHost}:${OUT_PORT}/api/pay`;
 
     console.log('Target URL: ', url);
+    console.log('Forwarding body:', req.body);
 
-    const response       = await axios.post(url, {});
-    res.status(response.status).send(response.data);
+		try {
+        const response = await axios.post(url, req.body, { headers: req.headers });
+        res.status(response.status).send(response.data);
+    } catch (error) {
+        console.error('Error forwarding request:', error.message);
+        const status = error.response ? error.response.status : 500;
+        const data = error.response ? error.response.data : 'Internal Server Error';
+        res.status(status).send(data);
+    }
+
 }
 
 app.use(morgan(':remote-addr :remote-user :method :url :status :res[content-length] :response-time ms'));

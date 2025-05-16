@@ -16,6 +16,6 @@ spec:
     spec:
       containers:
         - name: database
-          image: quay.io/skupper/patient-portal-database
+          image: quay.io/skupper/patient-portal-database:latest
           ports:
             - containerPort: 5432
